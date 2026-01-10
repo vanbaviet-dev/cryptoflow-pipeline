@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  glue5_pyspark:
+    image: public.ecr.aws/glue/aws-glue-libs:5.0.7
+    container_name: glue5_pyspark
+    command: pyspark
+    stdin_open: true      # tương đương -it
+    tty: true             # tương đương -it
+    env_file:
+      - ".env"
+    volumes:
+      - ~/.aws:/home/hadoop/.aws
+      - ./:/home/hadoop/workspace
+    working_dir: /home/hadoop/workspace
+    networks:
+      - data-pipeline-net
+networks:
+  data-pipeline-net:
+    driver: bridge
