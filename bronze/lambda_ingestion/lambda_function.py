@@ -18,7 +18,7 @@ http = urllib3.PoolManager(
 )
 
 # ========== CONSTANTS ==========
-BUCKET = os.getenv("BUCKET_NAME", "coin-prices-bucket")
+BUCKET = "coin-prices-bucket"
 BASE_URL = "https://api.binance.com"
 
 # ========== PARAMETER CACHE ==========
@@ -106,7 +106,7 @@ def lambda_handler(event, context):
         # ---- IDEMPOTENT S3 KEY ----
         key = (
             f"bronze/"
-            f"exchange=binance/"
+            f"coin_prices/"
             f"symbol={symbol}/"
             f"event_date={event_date}/"
             f"hour={event_hour}/"
@@ -118,29 +118,21 @@ def lambda_handler(event, context):
             Bucket=BUCKET,
             Key=key,
             Body=json.dumps(record),
-            ContentType="application/json",
+            ContentType="application/json"
         )
 
         # ---- STRUCTURED LOG ----
-        print(
-            json.dumps(
-                {
-                    "symbol": symbol,
-                    "interval": interval,
-                    "event_time": record["event_time"],
-                    "s3_key": key,
-                }
-            )
-        )
+        print(json.dumps({
+            "symbol": symbol,
+            "interval": interval,
+            "event_time": record["event_time"],
+            "s3_key": key
+        }))
 
         results.append(key)
-    print(f"Written {len(results)} files to S3 bucket {BUCKET}.")
+
     return {
         "status": "SUCCESS",
         "files_written": results,
-        "invoked_at": datetime.now(timezone.utc).isoformat(),
+        "invoked_at": datetime.now(timezone.utc).isoformat()
     }
-
-
-if __name__ == "__main__":
-    lambda_handler({}, None)
