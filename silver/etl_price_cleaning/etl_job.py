@@ -37,7 +37,7 @@ symbols = ssm.get_parameter(Name="/coin/binance/symbols", WithDecryption=False)[
 print(f"========== Retrieved symbols: {symbols} ==========")
 
 print("========== Start building paths ==========")
-root_path = "s3://coin-prices-bucket/bronze/exchange=binance/"
+root_path = "s3://coin-prices-bucket/bronze/coin_prices/"
 base_paths=[]
 for symbol in symbols:
     symbol = symbol.strip()
@@ -90,20 +90,18 @@ df = (
     .withColumn("event_date", to_date(col("event_ts")))
     .withColumn("hour", hour(col("event_ts")))
 )
-df.printschema()
 mapped_df = DynamicFrame.fromDF(df, glueContext, "mapped_df")
-
 
 print(f"mapped_df completed {mapped_df.count()} records")
 
 print("========== Writing data to Silver layer in Parquet format ==========")
-output_path = "s3://coin-prices-bucket/silver/"
+output_path = "s3://coin-prices-bucket/silver/coin_prices/"
 glueContext.write_dynamic_frame.from_options(
     frame = mapped_df,
     connection_type = "s3",
     connection_options = {
             "path": output_path,
-        "partitionKeys": ["exchange", "symbol", "event_date", "hour"] 
+        "partitionKeys": ["symbol", "event_date", "hour"] 
     },
     format = "parquet",
     transformation_ctx = "datasink"
