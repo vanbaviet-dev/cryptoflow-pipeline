@@ -35,3 +35,6 @@ npm-debug.log*
 tmp/
 temp/
 *.tmp
+
+# Local run files
+*run_local.py
