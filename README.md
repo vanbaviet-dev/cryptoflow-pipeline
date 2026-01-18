@@ -134,6 +134,11 @@ Update anytime via SSM:
 aws ssm put-parameter --name "/coin/binance/symbols" --value "BTCUSDT,ETHUSDT,SOLUSDT" --overwrite
 ```
 
+### Development Environment
+
+This project assumes VS Code as the primary IDE.
+Lambda Layers are resolved locally via `python.analysis.extraPaths`.
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
